@@ -1,30 +1,6 @@
 
 # main.py (snippet)
 
-
-
-Python
-# Diagnostics (remove after you fix things)
-import os, sys, platform, importlib, time
-from pathlib import Path
-
-with st.expander("🔎 Debug panel (temporary)", expanded=False):
-    st.write({
-        "python": sys.version,
-        "platform": platform.platform(),
-        "cwd": str(Path.cwd()),
-        "streamlit": st.__version__,
-        "has_OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")),
-        "time": time.strftime("%Y-%m-%d %H:%M:%S"),
-    })
-    for pkg in ["langchain","openai","faiss-cpu","chromadb","pandas","pydantic"]:
-        try:
-            m = importlib.import_module(pkg.replace("-", "_"))
-            st.write(pkg, getattr(m, "__version__", "installed"))
-        except Exception as e:
-            st.write(pkg, "NOT INSTALLED:", e)
-
-
 import streamlit as st
 from data_loader import load_transitions
 from logic import find_transition
@@ -59,3 +35,75 @@ OPENAI_KEY = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
 if not OPENAI_KEY:
     st.error("Missing OPENAI_API_KEY in Secrets or env. Go to Manage app → Settings → Secrets.")
     st.stop()
+
+
+
+
+Python
+# app/main.py
+from pathlib import Path
+import os
+import streamlit as st
+
+# 🧭 Page config (kept minimal; adjust as you like)
+st.set_page_config(page_title="Tank Cleaning Guidance Agent", layout="wide")
+
+# 🔧 Diagnostics (temporary)
+from app.components.debug_panel import render_debug_panel
+render_debug_panel(expanded=False)
+
+# 🔐 Secrets sanity check (OpenAI or Azure OpenAI)
+OPENAI_KEY = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
+AZURE_KEY  = os.getenv("AZURE_OPENAI_API_KEY") or st.secrets.get("AZURE_OPENAI_API_KEY")
+if not (OPENAI_KEY or AZURE_KEY):
+    st.info(
+        "No OpenAI/Azure OpenAI key found. "
+        "On Streamlit Cloud, set secrets via **Manage app → Settings → Secrets**.\n\n"
+        "Expected keys: `OPENAI_API_KEY` or `AZURE_OPENAI_API_KEY` (+ endpoint/deployment)."
+    )
+
+st.title("Tank Cleaning Guidance Agent")
+
+# ── UI ──────────────────────────────────────────────────────────────────────────
+with st.form("transition_form", clear_on_submit=False):
+    prev_cargo = st.selectbox(
+        "Previous Cargo",
+        ["Base", "AGO, GO, GTL", "MS", "ULSD", "Jet Fuel"],
+        index=1,
+    )
+    next_cargo = st.selectbox(
+        "Next Cargo",
+        ["Jet Fuel", "Aut, Gsoln, DMA", "ULSD", "MS", "Base"],
+        index=0,
+    )
+    # ✅ CRITICAL: forms submit only via a submit button inside the form
+    generate = st.form_submit_button("Generate cleaning plan")
+
+# ── ACTION ─────────────────────────────────────────────────────────────────────
+def _run_agent(prev: str, nxt: str):
+    """Call your existing agent/chain here; raise on error."""
+    # TODO: replace this import/adapter with your actual agent call.
+    # Example:
+    # from app.agent import generate_cleaning_plan
+    # return generate_cleaning_plan(prev, nxt)
+    from app.agent import generate_cleaning_plan  # adjust if module differs
+    return generate_cleaning_plan(prev, nxt)
+
+if generate:
+    with st.status("Working…", expanded=True) as status:
+        st.write({"previous": prev_cargo, "next": next_cargo})
+        try:
+            plan = _run_agent(prev_cargo, next_cargo)
+        except Exception as e:
+            st.exception(e)  # 👈 show real error instead of failing silently
+            status.update(state="error", label="Failed")
+            st.stop()
+        status.update(state="complete", label="Done")
+
+    if plan:
+        st.markdown(plan)
+    else:
+        st.warning("No plan returned by the agent. Check logs and inputs.")
+
+
+
