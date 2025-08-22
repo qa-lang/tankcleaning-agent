@@ -1,8 +1,10 @@
 
 import streamlit as st
-from app.data_loader import load_transitions
-from app.logic import find_transition
-from app.utils import format_transition_row
+
+from data_loader import load_transitions
+from logic import find_transition
+from utils import format_transition_row
+
 
 st.title("Tank Cleaning Guidance Agent")
 
