@@ -1,0 +1,2 @@
+Transition_ID,Previous_Cargo,Next_Cargo,HM50_Code,HM50_Code_Description,HM50_Notes,Memo_Count,Memo_Methods,Memo_Results,Memo_Lessons,Similar_Transitions,Suggested_Best_Practice,Sensitive_Cargo_Flag,Source_HM50,Source_Memo_IDs,Last_Updated
+1,Base Oil,Jet Fuel,2M,Gas-free, lift scale and mop,"No cleaning chemicals, tanks dry",4,"Hot FW wash, superstrip, mop dry","Approved, extra mopping needed","Sticky residues, line blowing needed","Base Oil → Aviation Gasoline","Hot wash, mop dry, inspect lines",TRUE,"Table 1, 2.11.12","SNAU1609;SNIM1632",2025-08-22
