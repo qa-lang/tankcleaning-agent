@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
 def load_transitions():
     return pd.read_csv(os.path.join(DATA_DIR, 'transitions.csv'))
