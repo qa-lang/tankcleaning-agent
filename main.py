@@ -28,3 +28,9 @@ with st.expander("Preview loaded transitions (first 10)"):
 prev_cargo = st.text_input("Previous Cargo", "Base Oil")
 next_cargo = st.text_input("Next Cargo", "Jet Fuel")
 ...
+
+import os, streamlit as st
+OPENAI_KEY = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
+if not OPENAI_KEY:
+    st.error("Missing OPENAI_API_KEY in Secrets or env. Go to Manage app → Settings → Secrets.")
+    st.stop()
