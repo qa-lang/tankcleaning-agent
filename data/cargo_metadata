@@ -1,0 +1,4 @@
+Cargo_Name,Category,Water_Sensitivity,FAME_Sensitivity,Special_Notes
+Jet Fuel,Aviation,High,High,"No cleaning chemicals, zero FAME"
+FAME,Biofuel,High,N/A,"Sticky, absorbs water"
+Base Oil,Lubricant,High,Medium,"Sticky, hard to remove"
