@@ -25,8 +25,6 @@ with st.expander("🔎 Debug panel (temporary)", expanded=False):
             st.write(pkg, "NOT INSTALLED:", e)
 
 
-Visa mindre
-
 import streamlit as st
 from data_loader import load_transitions
 from logic import find_transition
